@@ -1,0 +1,27 @@
+Procrustes ANOVA: Procrustes ANOVA ...
+Dataset: Lasius-niger
+
+Asymmetries are computed and displayed as 'R' minus 'L'.
+
+Classifiers used for the Procrustes ANOVA:
+Extra main effect(s): 
+-- Extra 1: colony
+-- Extra 2: sex
+Individuals: ind
+Sides: side
+
+Centroid size:
+Effect             SS              MS          df        F      P (param.)
+Extra 1          0.000188        0.000014      13      30.55      <.0001
+Extra 2          0.000818        0.000818       1    1724.44      <.0001
+Individual       0.000151         4.74e-7     319     350.49      <.0001
+Side              1.32e-8         1.32e-8       1       9.81      0.0019
+Ind * Side        4.50e-7         1.35e-9     333
+
+Shape. Procrustes ANOVA:
+Effect           SS            MS               df        F      P (param.)  Pillai tr.   P (param.)
+Extra 1        0.23913855    0.0008361488      286      13.61      <.0001       4.72       <.0001
+Extra 2        0.23955407    0.0108888212       22     177.20      <.0001       0.80       <.0001
+Individual     0.43125761    0.0000614502     7018       5.70      <.0001      16.66       <.0001
+Side           0.00075222    0.0000341918       22       3.17      <.0001       0.17       <.0001
+Ind * Side     0.07895706    0.0000107776     7326

@@ -1,0 +1,159 @@
+---
+title: "Analysis of wing asymmetry in *Lasius niger*"
+subtitle: "Supplementary document with statistical analysis"
+author: 
+  - name: "Adam Tofilski"
+    affiliation: University of Agriculture in Krakow, Poland
+    orcid: 0000-0002-3898-7029
+date: today
+date-format: iso
+format: 
+  html:
+    self-contained: true
+    toc: true
+---
+
+```{r setup, include = FALSE}
+
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  tidy = TRUE, tidy.opts = list(arrow=TRUE, indent=2)
+)
+options(digits=3) 
+
+```
+
+## Libraries
+
+```{r libraries}
+
+library(ggplot2) # plots
+ggplot2::theme_set(theme_light())
+library(ggpubr)  # ggarrange
+
+```
+
+## Procrustes ANOVA
+The output of the Procrustes ANOVA from MorphoJ. Some values, which in the output were rounded to 0, were extracted from Lasius-niger.morphoj file.
+
+```{r morphoj}
+
+txt <- readLines("Procrustes-ANOVA.txt")
+cat(txt, sep = "\n")
+
+```
+
+## Read data
+
+```{r data}
+
+dataIn = read.csv("Lasius-niger-asymmetry.csv", sep = ";")
+dataIn$colony = factor(dataIn$colony)
+
+# convert meters to milimeters
+dataIn$CS = dataIn$CS * 1000
+dataIn$CSasym = dataIn$CSasym * 1000
+
+# calculate absolute and relative size asymmetry
+dataIn$absCSasym = abs(dataIn$CSasym)
+dataIn$relCSasym = 100 * dataIn$absCSasym/dataIn$CS
+
+# number of individuals
+nrow(dataIn)
+# number of females and males
+table(dataIn$sex)
+
+```
+
+## Signed size asymmetry
+Males have larger signed wing size asymmetry than females.
+
+```{r singedCS}
+
+fit = lm(CSasym ~ sex + colony, dataIn)
+anova(fit)
+figA = ggplot(dataIn, aes(x = sex, y = CSasym)) +
+  geom_boxplot(aes(fill = sex), alpha = 0.7) +
+  geom_jitter(width = 0.15, size = 1, color = "black", alpha = 0.6) +
+  scale_fill_manual(values = c(F = "red", M = "blue")) +
+  scale_x_discrete(labels = c(F = "Females", M = "Males")) +
+  labs(x = "Sex", y = "\nSigned size asymmetry (mm)") +
+  guides(fill = "none")
+figA
+
+```
+
+## Absolute size asymmetry
+Females have larger absolute wing size asymmetry than males.
+
+```{r absCS}
+
+fit = lm(absCSasym ~ sex + colony, dataIn)
+anova(fit)
+figB = ggplot(dataIn, aes(x = sex, y = absCSasym)) +
+  geom_boxplot(aes(fill = sex), alpha = 0.7) +
+  geom_jitter(width = 0.15, size = 1, color = "black", alpha = 0.6) +
+  scale_fill_manual(values = c(F = "red", M = "blue")) +
+  scale_x_discrete(labels = c(F = "Females", M = "Males")) +
+  labs(x = "Sex", y = "\nAbsolute size asymmetry (mm)") +
+  guides(fill = "none")
+figB
+
+```
+
+## Relative size asymmetry
+There is no difference in relative wing size asymmetry between females and males.
+
+```{r relCS}
+
+fit = lm(relCSasym ~ sex + colony, dataIn)
+anova(fit)
+figC = ggplot(dataIn, aes(x = sex, y = relCSasym)) +
+  geom_boxplot(aes(fill = sex), alpha = 0.7) +
+  geom_jitter(width = 0.15, size = 1, color = "black", alpha = 0.6) +
+  scale_fill_manual(values = c(F = "red", M = "blue")) +
+  scale_x_discrete(labels = c(F = "Females", M = "Males")) +
+  labs(x = "Sex", y = "\nRelative size asymmetry (%)") +
+  guides(fill = "none")
+figC
+
+```
+
+## Shape asymmetry
+Fluctuating asymmetry of wing shape is larger in males than in females.
+
+```{r shape}
+
+# wing shape asymmetry is smaller in females than in males
+fit = lm(shapeFA ~ sex + colony, dataIn)
+anova(fit)
+figD = ggplot(dataIn, aes(x = sex, y = shapeFA)) +
+  geom_boxplot(aes(fill = sex), alpha = 0.7) +
+  geom_jitter(width = 0.15, size = 1, color = "black", alpha = 0.6) +
+  scale_fill_manual(values = c(F = "red", M = "blue")) +
+  scale_x_discrete(labels = c(F = "Females", M = "Males")) +
+  labs(x = "Sex", y = "\nShape asymmetry") +
+  guides(fill = "none")
+figD
+
+```
+
+## Combined plot
+
+```{r fig}
+
+ggarrange(figA, figB, figC, figD, 
+          labels = c("a", "b", "c", "d"), 
+          font.label = list(size = 12, face = "bold"),
+          ncol = 2, nrow = 2)
+
+```
+
+## Session information
+
+```{r info}
+sessionInfo()
+```
+
